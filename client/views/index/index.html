@@ -1,0 +1,19 @@
+<template name="index">
+    <div id="wrap">
+        <div class="container">
+            {{#if logged}}
+                {{> mainPart}}
+            {{else}}
+                {{>formContainer}}
+            {{/if}}
+        </div>
+    </div>
+
+</template>
+
+<!--main template finishes-->
+<template name="roomResult">
+    <div class="resultRoom">
+        <li data-id="{{id}}">{{name}}</li>
+    </div>
+</template>

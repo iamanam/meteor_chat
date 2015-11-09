@@ -1,0 +1,30 @@
+<template name="mainPart">
+   
+    <div class="main">
+        <div class="intro">
+            User:{{userData.name}} currently talking in {{userData.room}}
+        </div>
+        <div class="showmsg">
+            <ul class="msgList">
+                {{#each msgList }}
+                        <li>{{owner}} :- {{msg}}</li>
+                {{/each}}
+            </ul>
+        </div>
+        <div class="showname">
+            <div class="totalUser">
+                <p>Total user :<br> <span></span></p>
+            </div>
+            <ul class="userList">
+                {{#each userList }}
+                    <li data-id="{{_id}}">{{user}}</li>
+                {{/each}}
+            </ul>
+        </div>
+        <form class="messageForm">
+            <textarea class="msg" placeholder="put a msg" required></textarea>
+            <input type="submit" class="msgSave" value="Enter">
+        </form>
+    </div>
+
+</template>

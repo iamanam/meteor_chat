@@ -1,0 +1,80 @@
+<template name="formContainer">
+    {{>info}}
+    <div class="row">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="panel-heading">
+                    <h3 class="panel-title"> Fill the form in 5 sec to start
+                    </h3>
+                </div>
+
+                <div class="col-sm-6">
+                    <form class="newUser">
+                        <label>Make a room with name</label>
+                        <br>
+                        <input type="text" class="nameSet form-control " placeholder=" Put your name to start chatting"
+                               required>
+                        <input type="text" class="roomInput form-control" placeholder=" Put your room name to add user"
+                               required>
+                        <input type="submit" class="nameAdd" value="Enter">
+                    </form>
+                </div>
+                <div class="col-sm-6">
+                    <form class="advanceUser">
+                        <label>Search a room </label>
+                        <br>
+                        <input type="text" class="search form-control" placeholder="Search a room" required>
+                <span>
+                    {{#if searchRoom}}
+                        {{> roomResult id=searchRoom.id name=searchRoom.name }}
+                    {{/if}}
+                </span>
+                        <input type="text" name="name" placeholder="Put a name to use in chat"
+                               class="searchName form-control"
+                               required>
+                        <input type="submit" class="addRoom">
+                    </form>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</template>
+<template name="info">
+    <div class="row visible-md">
+        <div class="card card-inverse col-sm-3" style="background-color: #FFC107">
+            <div class="card-block">
+                <span class="extend"></span>
+
+                <div class="span-right">
+                    <h2>No setup</h2></div>
+            </div>
+        </div>
+
+        <div class="card card-inverse col-sm-3">
+            <div class="card-block">
+                <span class="extend"></span>
+
+                <div class="span-right">
+                    <h2>Easy to start</h2></div>
+            </div>
+        </div>
+        <div class="card card-inverse col-sm-3" style="background-color: coral">
+            <div class="card-block">
+                <span class="extend"></span>
+
+                <div class="span-right"><h2>No sign-up</h2></div>
+            </div>
+        </div>
+        <div class="card card-inverse col-sm-3" style="background-color: deepskyblue">
+            <div class="card-block">
+                <span class="extend"></span>
+
+                <div class="span-right"><h2>Safe to use</h2></div>
+            </div>
+        </div>
+    </div>
+
+</template>
+
