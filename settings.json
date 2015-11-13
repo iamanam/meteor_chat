@@ -1,6 +1,13 @@
 {
-    "orion-cli": {
-        "profile": "default",
-        "config": "private/orion-config.json"
+  "orion-cli": {
+    "profile": "default",
+    "config": "private/orion-config.json"
+  },
+  "public": {
+    "persistent_session": {
+      "default_method": "persistent"
     }
+  }
 }
+
+

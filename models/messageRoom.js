@@ -35,11 +35,11 @@ if (Meteor.isServer) {
 }
 
 
-setTimeoutFor3sCb = function (value, cb) {
+let setTimeoutFor3sCb = function (value, cb) {
     var result = value;
     Meteor.setTimeout(function () {
         console.log('Result after timeout', result);
-        cb(null, result + 3)
+        cb(null, result)
     }, 3000);
 };
 //-----------------Methods start here----------------------------------------------------/////////////////

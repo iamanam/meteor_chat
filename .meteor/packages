@@ -42,3 +42,4 @@ es5-shim
 aldeed:template-extension
 twbs:bootstrap
 ian:accounts-ui-bootstrap-3
+u2622:persistent-session

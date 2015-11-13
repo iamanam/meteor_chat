@@ -1,38 +1,81 @@
 User_room = new Mongo.Collection('User_room');
 let errorCheck = function (e, r) {
     if (e) {
-        throw new Meteor.Error("unique", e.sanitizedError.reason);
+        //throw new Meteor.Error("unique", e.sanitizedError.reason);
+        throw e;
     }
     return r;
 };
 
-User_room.attachSchema(
-    new SimpleSchema({
-        owner: {
-            type: String
+setTimeoutFor3sCb = function (value, cb) {
+    var result = value;
+    Meteor.setTimeout(function () {
+        console.log('Result after timeout', result);
+        cb(null, result)
+    }, 3000);
+};
+var userValidScheme = {
+    owner: {
+        type: String
+    },
+    room_name: {
+        type: String,
+        index: true
+    },
+    roomIsOpen: {
+        type: Boolean,
+        autoValue: function () {
+            return false;
         },
-        room_name: {
-            type: String,
-            index: true
+        optional: true
+    },
+    maxUser: {
+        type: Number,
+        autoValue: function () {
+            return 10
         },
-        userIn: {
-            type: String
-        },
-        createdAt: {
-            type: Date,
-            autoValue: function () {
-                if (this.isInsert) {
-                    return new Date;
-                } else if (this.isUpsert) {
-                    return {$setOnInsert: new Date};
-                } else {
-                    this.unset();  // Prevent user from supplying their own value
-                }
+        optional: true
+    },
+    pending: {
+        type: [String],
+        optional: true,
+        autoValue: function () {
+            if (this.isInsert)
+                return ["nah"]
+        }
+
+    },
+    userIn: {
+        type: [String],
+        autoValue: function (doc) {
+            if (this.isInsert) {
+                return [doc.owner];
+            }
+            else if (this.isUpsert) {
+                return {$push: {userIn: doc.userIn}}
             }
         }
-    })
+    },
+    blocked: {
+        type: [String],
+        optional: true
+    },
+    createdAt: {
+        type: Date,
+        autoValue: function () {
+            if (this.isInsert) {
+                return new Date;
+            } else if (this.isUpsert) {
+                return {$setOnInsert: new Date};
+            } else {
+                this.unset();  // Prevent user from supplying their own value
+            }
+        }
+    }
+};
+User_room.attachSchema(
+    new SimpleSchema(userValidScheme)
 );
-
 
 // Collection2 already does schema checking
 // Add custom permission rules if needed
@@ -54,18 +97,56 @@ if (Meteor.isServer) {
         "insertRoom": function (x, y) {
             check(x, String);
             check(y, String);
+            let isMsgCreated = messageRoom.findOne({roomName: y});
+            //checking with the database if any msg room with this value already exist, will return undefined if not
+            if (isMsgCreated === undefined) {
+                //with this data array we are cross checking if the values are true with the scheme
+                let datForMsgRoom = {
+                    roomName: y,
+                    uniqueMessageRoomId: "Random",
+                    message: [{"owner": "System", "msg": "room created"}]
+                };
+                let dataForUserRoom = {
+                    owner: x,
+                    room_name: y
+                };
+                //Cross checking with the scheme to find any mismatch
+                try {
+                    check(datForMsgRoom, msgScheme);
+                    check(dataForUserRoom, userValidScheme);
+                }
+                catch (e) {
+                    throw e;
+                }
+                finally {
+                    // After scheme checking insert the data in msgROom
+                    try {
+                        messageRoom.insert(datForMsgRoom);
+                        User_room.insert(dataForUserRoom);
+                        console.log(true);
+                        return {"msgInsert": true, "userRoomInsert": true};
 
-            let makeRoom = {
-                roomName: y,
-                uniqueMessageRoomId: "xjks",
-                message: [{"owner": "System", "msg": "room created"}]
-            };
-            check(makeRoom, msgScheme);
-            let isCreated = messageRoom.findOne({roomName: y});
-            let inMsgRoom = isCreated === undefined ? messageRoom.insert(makeRoom) : null;
-            console.log(inMsgRoom);
-            let inRoom = User_room.insert({owner: x, room_name: y, userIn: x}, errorCheck);
-            return {"msg": inMsgRoom, "room": inRoom};
+                    }
+                    catch (e) {
+                        throw e;
+
+                    }
+                }
+            }
+            else {
+                return false;
+            }
+
+            //throw new Meteor.error("duplicate", "A roomName with this exist, try another");
+        },
+        "searchRoom": function (valRoom) {
+            check(valRoom, String);
+            return User_room.findOne({room_name: valRoom}, {fields: {id_1: 1, owner: 1}});
+        },
+        "pendReq": function (roomId, user = "unknown") {
+            check(roomId, String);
+            check(user, String);
+            return User_room.update(roomId, {$push: {"pending": user}})
         }
     })
 }

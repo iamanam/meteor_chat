@@ -1,30 +1,40 @@
 <template name="mainPart">
-   
-    <div class="main">
-        <div class="intro">
-            User:{{userData.name}} currently talking in {{userData.room}}
+    <div class="notice panel-default">
+        {{#each sweetAlertInvoke.list}}
+            {{> guestAlert message=sweetAlertInvoke.msg name=name}}
+
+        {{/each}}
+
+    </div>
+    <div class="main panel panel-default">
+        <div class="intro panel-heading">
+            <h3 class="panel-title">User:{{userData.name}} currently talking in {{userData.room}}</h3>
         </div>
-        <div class="showmsg">
-            <ul class="msgList">
-                {{#each msgList }}
+        <div class="panel-body">
+            <div class="showmsg ">
+                <ul class="msgList">
+                    {{#each msgList }}
                         <li>{{owner}} :- {{msg}}</li>
-                {{/each}}
-            </ul>
-        </div>
-        <div class="showname">
-            <div class="totalUser">
-                <p>Total user :<br> <span></span></p>
+                    {{/each}}
+                </ul>
             </div>
-            <ul class="userList">
-                {{#each userList }}
-                    <li data-id="{{_id}}">{{user}}</li>
-                {{/each}}
-            </ul>
+            <div class="UserInfo ">
+                <div class="totalUser panel-heading">
+                    <p class="panel-title">Total user :<br> <span></span></p>
+                </div>
+                <ul class="userList list-group">
+                    {{#each userList.pendingUser }}
+                        <li class="" data-id="{{guestId}}">{{name}}</li>
+                    {{/each}}
+                </ul>
+            </div>
         </div>
+
         <form class="messageForm">
-            <textarea class="msg" placeholder="put a msg" required></textarea>
-            <input type="submit" class="msgSave" value="Enter">
+            <textarea class="msg form-controls" rows="2" placeholder="put a msg" required></textarea>
+            <input type="submit" class="btn btn-primary msgSave" value="Enter">
         </form>
     </div>
 
 </template>
+

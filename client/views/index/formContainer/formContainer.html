@@ -25,24 +25,20 @@
                         <br>
                         <input type="text" class="search form-control" placeholder="Search a room" required>
                 <span>
-                    {{#if searchRoom}}
-                        {{> roomResult id=searchRoom.id name=searchRoom.name }}
-                    {{/if}}
+                    {{#with searchRoom}}
+                        {{> roomResult id=searchRoom.uniqueRoom name=searchRoom.roomName}}
+                    {{/with}}
                 </span>
-                        <input type="text" name="name" placeholder="Put a name to use in chat"
-                               class="searchName form-control"
-                               required>
                         <input type="submit" class="addRoom">
                     </form>
 
                 </div>
             </div>
-
         </div>
     </div>
 </template>
 <template name="info">
-    <div class="row visible-md">
+    <div class="row hidden-sm-down">
         <div class="card card-inverse col-sm-3" style="background-color: #FFC107">
             <div class="card-block">
                 <span class="extend"></span>
@@ -78,3 +74,32 @@
 
 </template>
 
+<template name="roomResult">
+    <div class="list-group search-result">
+        <button type="button" data-toggle="modal" data-target="#exampleModal" class="list-group-item"
+                data-id="{{id}}">{{name}}</button>
+    </div>
+    <div id="exampleModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="alert alert-danger" role="alert">
+                    <h3>The owner of this room is requested for permission</h3>
+                </div>
+                <div class="well">
+                    <h3 class="alert-info">Send request to the owner to add u to this room</h3>
+
+                    <div class="well">
+                        <input type="text" class="form-control anyThing"
+                               placeholder="Put a name/ anything to recognize u">
+                    </div>
+                    <button type="submit" id="myStateButton" data-complete-text="Request send!" class="btn btn-primary"
+                            autocomplete="off">
+                        Request
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</template>

@@ -1,16 +1,11 @@
 Template.index.created = function () {
     let self = this;
-    this.loggedUser = new ReactiveVar(false);
+    this.loggedUser = Session.get("user") === undefined ? new ReactiveVar(false) : new ReactiveVar(true);
 };
 
 Template.index.helpers({
     logged: function () {
         return Template.instance().loggedUser.get();
     }
-
 });
-Template.index.destroyed = function () {
-    Session.set("user", null);
-    Session.set("room", null);
-};
 
