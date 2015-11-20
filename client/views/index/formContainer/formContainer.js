@@ -1,7 +1,7 @@
 var invokeSearch = new Tracker.Dependency;
 
 Template.formContainer.onCreated = function () {
-    self = this;
+    let self = this;
     self.chatUser = null;
     self.uniqueRoom = null;
     self.searchRoomName = null;
@@ -39,7 +39,6 @@ Template['formContainer'].events({
         Meteor.call("insertSiteUser", temp.chatUser, temp.uniqueRoom, secureRandom, function (e, r) {
             if (e) throw e;
             Session.setPersistent({user: temp.chatUser, room: temp.uniqueRoom});
-            temp.parent().loggedUser.set(true);
         });
 
         /**Tracker autoRun will provide the result if this request on server completed and its mandatory to use for the plugin

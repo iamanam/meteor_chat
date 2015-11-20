@@ -3,9 +3,6 @@ const SiteUserScheme = {
     myName: {
         type: String
     },
-    uniqueIdentifier: {
-        type: String
-    },
     roomOwned: {
         type: String
     },
@@ -14,23 +11,7 @@ const SiteUserScheme = {
         denyUpdate: true
     }
 };
-SiteUser.attachSchema(
-    new SimpleSchema({
-        myName: {
-            type: String
-        },
-        uniqueIdentifier: {
-            type: String
-        },
-        roomOwned: {
-            type: String
-        },
-        joined: {
-            type: Date,
-            denyUpdate: true
-        }
-    })
-);
+SiteUser.attachSchema(SiteUserScheme);
 
 // Collection2 already does schema checking
 // Add custom permission rules if needed
@@ -58,6 +39,7 @@ if (Meteor.isServer) {
  * @param{string} t roomName {a string for the room name}
  * @param{array} randomNumberArray { a random crypto array which need client window to genrate, here we will sort any of them as uniqueNo}
  */
+
 if (Meteor.isServer) {
     class SiteUserManange {
 
@@ -70,11 +52,13 @@ if (Meteor.isServer) {
         setUser() {
             try {
                 var dataToSave = {
+                    _id: Meteor.userId() || null,
                     myName: this.userName,
                     uniqueIdentifier: this.secureNumber,
                     roomOwned: this.roomName,
                     joined: new Date
                 };
+
             }
             catch (e) {
                 throw e;
@@ -87,6 +71,7 @@ if (Meteor.isServer) {
         setRoom() {
             try {
                 var dataToSaveRoom = {
+                    _id: Meteor.userId() || null,
                     roomName: this.roomName,
                     uniqueRoomId: this.secureNumber,
                     roomOpen: false,

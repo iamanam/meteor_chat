@@ -2,52 +2,83 @@ var sub = new Tracker.Dependency;
 Template.mainPart.hooks({
     created: function () {
         const roomUsed = Match.test(Session.get("room"), String) ? Session.get("room") : null;
-        this.sweetAlert = new ReactiveVar(null);
-        this.subscribe("messageCount", roomUsed, 1);
         this.subscribe("guestCount", Session.get("room"), 1);//to check if any pending guest
+        this.subscribe("MyRoom", Session.get("room"))
     }
 });
 
-Template['mainPart'].helpers({
+/**
+ * Helpers for user & global.............................................................................................................
+ */
+Template.mainPart.helpers({
     userData: function () {
         return {name: Session.get("user"), room: Session.get("room")}
     },
-    sweetAlertInvoke: function () {
-        return Template.instance().sweetAlert.get();
-    },
-    userList: function () {
-        if (Match.test(Counts.get("guestCount"), Number)) {
-            let list = ReactiveMethod.call("assositeFind", Session.get("room"),Counts.get("guestCount"));
-            if (list !== undefined) {
-                console.log(list);
-                //{message: "New Guest ringing", info: list.pendingUser}
-                Template.instance().sweetAlert.set({list: list.pendingUser, msg: "- A Guest is Knocking !! Knock!"});
-                return list;
-            }
-            return null;
-        }
-        return Meteor.error;
-    },
-    msgList: function () {
-        sub.depend();
-        //console.log(Counts.get("msgCount"));
-        Meteor.subscribe("msg", Session.get("room"), Counts.get("msgCount"));
-        //console.log(msgSub.subscriptionId);
+    guestManager: function () {
+        //data borrowed from the Index without sending another request to server
+        //var userData = Template.instance().parent(1, true).myData;
+        //if one session is end but still user logged in for the Session then userData will be null
         if (Template.instance().subscriptionsReady()) {
-            if (Match.test(Session.get("room"), String)) {
-                let msglist = ReactiveMethod.call("findMsg", Session.get("room"), Counts.get("msgCount"));
-                console.log(msglist);
-                if (msglist !== undefined) {
-                    return msglist.message;
-                }
-                return Meteor.error;
-            }
+            return Meteor.call("myRoom", function (e, r) {
+                if (e) throw e;
+                console.log(r.pendingUser);
+                return r;
+            });
         }
-        return Meteor.error;
+        else
+            return null
     }
-
 });
 
+/**
+ * Helpers for user.............................................................................................................
+
+ if (!Meteor.userId()) {
+    Template['mainPart'].helpers({
+        guestManager: function () {
+            if (Match.test(Counts.get("guestCount"), Number)) {
+                let list = ReactiveMethod.call("guestFind", Session.get("room"), Counts.get("guestCount"));
+                var count = 0;
+                if (list && list !== undefined && count === 0) {
+                    count++;
+                    if (!list.pendingUser)
+                        return null;
+                    list.pendingUser.forEach(function (pendingUser) {
+                        sAlert.info({
+                            id: pendingUser.guestId,
+                            sAlertIcon: 'asterisk',
+                            sAlertTitle: 'New guest is knocking to connect with ya!!',
+                            message: "That person called :" + pendingUser.name
+                        });
+                    }, {timeout: false});
+                    return list;
+                }
+                return null;
+            }
+            return new Meteor.Error("invalid user");
+        },
+        msgList: function () {
+            sub.depend();
+            //console.log(Counts.get("msgCount"));
+            Meteor.subscribe("msg", Session.get("room"), Counts.get("msgCount"));
+            //console.log(msgSub.subscriptionId);
+            if (Template.instance().subscriptionsReady()) {
+                if (Match.test(Session.get("room"), String)) {
+                    let msglist = ReactiveMethod.call("findMsg", Session.get("room"), Counts.get("msgCount"));
+                    console.log(msglist);
+                    if (msglist !== undefined) {
+                        return msglist.message;
+                    }
+                    return Meteor.error;
+                }
+            }
+            return Meteor.error;
+        }
+
+    });
+
+}
+ */
 Template['mainPart'].events({
     'submit .messageForm': function (e, t) {
         e.preventDefault();

@@ -17,6 +17,14 @@ MyRoomScheme = {
         type: [String],
         optional: true
     },
+    guestConnected: {
+        type: Array,
+        optional: true,
+        blackbox: true
+    },
+    "guestConnected.$": {
+        type: String
+    },
     "pendingUser.$.name": {
         type: String,
         optional: true
@@ -53,31 +61,9 @@ if (Meteor.isServer) {
         }
     });
 
-    Meteor.methods({
-        roomSearch: function (roomName) {
-            check(roomName, String);
-            return MyRoom.findOne({roomName: roomName}, {fields: {uniqueRoomId: 1}})
-        },
-        assositeFind: function (roomName, count) {
-            check(roomName, String);
-            check(count, Number);
-            return MyRoom.findOne({roomName: roomName}, {fields: {pendingUser: 1, roomConnected: 1}});
-        }
-    })
+
 }
 
-/**
- ---------------------------------------------------User Function---------------------------------------------------------------------
- ///////////////////////////////////////////////////Server methods//////////////////////////////////////////////////////////////////////
- ?    roomName
- ?    uniqueRoomId
- ?    roomAge
- ?    roomOpen
- ?    roomConnected
- ?    guestUser
- ?    PendingUser
- ?    blackUser_ip
 
- */
 
 

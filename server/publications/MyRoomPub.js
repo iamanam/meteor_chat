@@ -1,6 +1,12 @@
-Meteor.publish('MyRoom', function () {
-    return MyRoom.find();
-});
+Meteor.publish('MyRoom', function (roomName) {
+        check(roomName, String);
+        if (roomName)
+            return MyRoom.find({roomName: roomName});
+        else
+            new Meteor.Error("invalid_user ", "Information needed")
+    }
+)
+;
 Meteor.publish('guestCount', function (room, filter) {
     check(room, String);
     check(filter, Number);
